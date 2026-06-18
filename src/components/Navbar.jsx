@@ -115,14 +115,17 @@ export default function Navbar() {
 
           <Link
             href="/login"
-            className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 sm:block"
+            className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 sm:block hover:no-underline"
           >
             Login
           </Link>
 
-          <Button className="rounded-xl bg-[#E05638] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#c9492e] transition-all">
+          <Link
+            href="/register"
+            className="rounded-xl bg-[#E05638] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#c9492e] transition-all hover:no-underline"
+          >
             Register
-          </Button>
+          </Link>
         </div>
       </header>
 
@@ -150,7 +153,7 @@ export default function Navbar() {
             <li className="mt-2 flex flex-col gap-2 border-t border-gray-100 dark:border-zinc-800 pt-4">
               <Link
                 href="/login"
-                className="block py-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 no-underline hover:no-underline"
+                className="block py-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:no-underline"
               >
                 Login
               </Link>
