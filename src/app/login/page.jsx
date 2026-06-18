@@ -3,16 +3,15 @@
 import React, { useState } from "react";
 import {
   Button,
-  Description,
   FieldError,
   Form,
   Input,
   Label,
   TextField,
 } from "@heroui/react";
-import { Home, Eye, EyeOff, UserPlus } from "lucide-react";
+import { Home, Eye, EyeOff, LogIn } from "lucide-react";
 
-export default function Register() {
+export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -25,45 +24,31 @@ export default function Register() {
       data[key] = value.toString();
     });
 
-    alert(`Registration submitted with: ${JSON.stringify(data, null, 2)}`);
+    alert(`Login submitted with: ${JSON.stringify(data, null, 2)}`);
   };
 
   const inputClassName =
     "w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E05638] focus:border-transparent transition-all";
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50/50 px-6 py-12 dark:bg-zinc-950 transition-colors duration-200">
-      <div className="w-full max-w-md bg-white border border-slate-100 dark:border-zinc-800/80 dark:bg-zinc-900 rounded-3xl p-8 shadow-xl shadow-slate-100/40 dark:shadow-none">
+    <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50/40 dark:bg-zinc-950 px-6 py-12 transition-colors duration-200">
+      <div className="w-full max-w-md bg-white border border-slate-100 dark:border-zinc-900 dark:bg-zinc-900 rounded-3xl p-8 shadow-xl shadow-slate-100/30 dark:shadow-none">
         {/* Top Header & Logo Identity */}
         <div className="flex flex-col items-center mb-8 text-center">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E05638] text-white shadow-sm mb-3">
             <Home size={22} strokeWidth={2.5} />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Create an account
+            Welcome Back
           </h2>
           <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-            Join NestFinder to locate your perfect rental property
+            Enter your credentials to access your NestFinder profile
           </p>
         </div>
 
         {/* HeroUI Form Structure */}
         <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
-          {/* 1. Name Field */}
-          <TextField
-            isRequired
-            name="name"
-            type="text"
-            className="w-full flex flex-col gap-1.5"
-          >
-            <Label className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
-              Full Name
-            </Label>
-            <Input placeholder="John Doe" className={inputClassName} />
-            <FieldError className="text-xs text-red-500 mt-1" />
-          </TextField>
-
-          {/* 2. Email Field with Regex Validation */}
+          {/* 1. Email Field */}
           <TextField
             isRequired
             name="email"
@@ -83,45 +68,24 @@ export default function Register() {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          {/* 3. Photo URL Field */}
-          <TextField
-            isRequired
-            name="photo"
-            type="url"
-            className="w-full flex flex-col gap-1.5"
-          >
-            <Label className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
-              Profile Photo URL
-            </Label>
-            <Input
-              placeholder="https://example.com/avatar.jpg"
-              className={inputClassName}
-            />
-            <FieldError className="text-xs text-red-500 mt-1" />
-          </TextField>
-
-          {/* 4. Password Field with Advanced Strength Validation */}
+          {/* 2. Password Field */}
           <TextField
             isRequired
             name="password"
             type={isVisible ? "text" : "password"}
             className="w-full flex flex-col gap-1.5"
-            validate={(value) => {
-              if (value.length < 8) {
-                return "Password must be at least 8 characters";
-              }
-              if (!/[A-Z]/.test(value)) {
-                return "Password must contain at least one uppercase letter";
-              }
-              if (!/[0-9]/.test(value)) {
-                return "Password must contain at least one number";
-              }
-              return null;
-            }}
           >
-            <Label className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
-              Password
-            </Label>
+            <div className="flex justify-between items-center">
+              <Label className="text-xs font-semibold text-slate-700 dark:text-zinc-300">
+                Password
+              </Label>
+              <a
+                href="#"
+                className="text-xs font-medium text-[#E05638] hover:underline"
+              >
+                Forgot password?
+              </a>
+            </div>
             <div className="relative w-full">
               <Input
                 placeholder="Enter your password"
@@ -135,40 +99,29 @@ export default function Register() {
                 {isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
               </button>
             </div>
-            <Description className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
-              Must be at least 8 characters with 1 uppercase and 1 number
-            </Description>
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          {/* Action Buttons */}
+          {/* Action Operations */}
           <div className="flex flex-col gap-2 mt-4">
             <Button
               type="submit"
               className="w-full rounded-xl bg-[#E05638] text-sm font-semibold text-white shadow-md hover:bg-[#c9492e] transition-all h-11 flex items-center justify-center gap-2"
             >
-              <UserPlus size={18} />
-              Sign Up
+              <LogIn size={18} />
+              Sign In
             </Button>
-
-            <Button
-              type="reset"
-              variant="light"
-              className="w-full rounded-xl text-xs text-slate-400 dark:text-zinc-500 h-9"
-            >
-              Reset Form
-            </Button>
-
-            <p className="text-center text-xs text-slate-400 dark:text-zinc-500 mt-4">
-              Already have an account?{" "}
-              <a
-                href="/login"
-                className="text-[#E05638] font-bold hover:underline"
-              >
-                Sign In
-              </a>
-            </p>
           </div>
+
+          <p className="text-center text-xs text-slate-400 dark:text-zinc-500 mt-4">
+            Don&apos;t have an account yet?{" "}
+            <a
+              href="/register"
+              className="text-[#E05638] font-bold hover:underline"
+            >
+              Sign Up
+            </a>
+          </p>
         </Form>
       </div>
     </main>
