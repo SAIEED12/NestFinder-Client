@@ -27,7 +27,7 @@ export default function Register() {
     await authClient.signUp.email({
       ...user,
       image: user.photo,
-      // plan: 'free',
+      plan: 'free',
     });
 
     redirect('/')

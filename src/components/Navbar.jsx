@@ -15,6 +15,7 @@ export default function Navbar() {
   const user = session?.user;
   const router = useRouter()
 
+
   const handleSignOut = async () => {
     await signOut();
     router.push("/login");
@@ -26,12 +27,22 @@ export default function Navbar() {
   }, []);
 
   const pathname = usePathname();
+  if(pathname.includes('dashboard')){
+    return null;
+  }
+
+  
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "All Properties", href: "/all-properties" },
     { name: "Services", href: "/services" },
     { name: "About", href: "/about" },
   ];
+
+  if(user){
+    navLinks.push({ name: "Dashboard", href: "/dashboard" });
+  }
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/80 dark:bg-zinc-950/80 dark:border-zinc-800 backdrop-blur-lg transition-colors duration-200">
@@ -126,12 +137,14 @@ export default function Navbar() {
           {
             user ? 
             <>
-            Hi, {user.name}!
+            <p className="hidden lg:text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              Hi, {user.name}!
+            </p>
             <Image
                 src={session?.user?.image}
                 alt="User Avatar"
-                width={50}
-                height={50}
+                width={30}
+                height={30}
                 className="rounded-full"
               />
               <Button
@@ -142,21 +155,21 @@ export default function Navbar() {
               
             </>
             :  
-              <Link
+              <><Link
                 href="/login"
                 className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 sm:block hover:no-underline"
               >
                 Login
-              </Link>
+              </Link><Link
+                href="/register"
+                className="rounded-xl bg-[#E05638] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#c9492e] transition-all hover:no-underline"
+              >
+                  Register
+                </Link></>
             
           }
 
-          <Link
-            href="/register"
-            className="rounded-xl bg-[#E05638] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#c9492e] transition-all hover:no-underline"
-          >
-            Register
-          </Link>
+
         </div>
       </header>
 
