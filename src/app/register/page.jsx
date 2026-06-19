@@ -11,21 +11,26 @@ import {
   TextField,
 } from "@heroui/react";
 import { Home, Eye, EyeOff, UserPlus } from "lucide-react";
+import { redirect } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function Register() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  // const {register, handleSubmit} = useForm();
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data = {};
+    const user = Object.fromEntries(formData.entries());
 
-    formData.forEach((value, key) => {
-      data[key] = value.toString();
+    await authClient.signUp.email({
+      ...user,
+      image: user.photo,
+      // plan: 'free',
     });
 
-    alert(`Registration submitted with: ${JSON.stringify(data, null, 2)}`);
+    redirect('/')
   };
 
   const inputClassName =

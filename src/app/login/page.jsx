@@ -10,21 +10,28 @@ import {
   TextField,
 } from "@heroui/react";
 import { Home, Eye, EyeOff, LogIn } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data = {};
+    const user = Object.fromEntries(formData.entries());
 
-    formData.forEach((value, key) => {
-      data[key] = value.toString();
+    await authClient.signIn.email({
+      ...user,
+      callbackURL: "/",
     });
+  };
 
-    alert(`Login submitted with: ${JSON.stringify(data, null, 2)}`);
+    const handleGoogleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
   };
 
   const inputClassName =
@@ -112,6 +119,15 @@ export default function Login() {
               Sign In
             </Button>
           </div>
+
+                      <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full h-12 font-bold rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-3 cursor-pointer"
+            >
+              <Image width={20} height={20} src="https://www.google.com/favicon.ico" alt="Google" />
+              Sign in with Google
+            </button>
 
           <p className="text-center text-xs text-slate-400 dark:text-zinc-500 mt-4">
             Don&apos;t have an account yet?{" "}
