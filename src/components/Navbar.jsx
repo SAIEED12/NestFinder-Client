@@ -3,12 +3,22 @@ import { useState, useEffect } from "react";
 import { Link, Button } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { Home, Sun, Moon } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  }
 
   // Prevent hydration mismatch for client-side state icons
   useEffect(() => {
@@ -113,12 +123,33 @@ export default function Navbar() {
             )}
           </Button>
 
-          <Link
-            href="/login"
-            className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 sm:block hover:no-underline"
-          >
-            Login
-          </Link>
+          {
+            user ? 
+            <>
+            Hi, {user.name}!
+            <Image
+                src={session?.user?.image}
+                alt="User Avatar"
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+              <Button
+              onClick={handleSignOut}  
+              variant="ghost">
+              SignOut
+              </Button>
+              
+            </>
+            :  
+              <Link
+                href="/login"
+                className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 sm:block hover:no-underline"
+              >
+                Login
+              </Link>
+            
+          }
 
           <Link
             href="/register"

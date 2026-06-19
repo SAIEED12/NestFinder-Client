@@ -12,23 +12,36 @@ import {
 import { Home, Eye, EyeOff, LogIn } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formData = new FormData(e.currentTarget);
     const user = Object.fromEntries(formData.entries());
 
-    await authClient.signIn.email({
-      ...user,
-      callbackURL: "/",
-    });
-  };
+    try {
+      const { data, error } = await authClient.signIn.email({
+        ...user,
+        callbackURL: "/",
+      });
 
-    const handleGoogleLogin = async () => {
+      if (error) {
+        toast.error(error.message || "Login Failed!");
+        setIsLoading(false);
+        return;
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred.");
+      setIsLoading(false);
+    }
+  };
+  const handleGoogleLogin = async () => {
     await authClient.signIn.social({
       provider: "google",
     });
@@ -120,14 +133,19 @@ export default function Login() {
             </Button>
           </div>
 
-                      <button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full h-12 font-bold rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-3 cursor-pointer"
-            >
-              <Image width={20} height={20} src="https://www.google.com/favicon.ico" alt="Google" />
-              Sign in with Google
-            </button>
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full h-12 font-bold rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-3 cursor-pointer"
+          >
+            <Image
+              width={20}
+              height={20}
+              src="https://www.google.com/favicon.ico"
+              alt="Google"
+            />
+            Sign in with Google
+          </button>
 
           <p className="text-center text-xs text-slate-400 dark:text-zinc-500 mt-4">
             Don&apos;t have an account yet?{" "}

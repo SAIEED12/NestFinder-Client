@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Providers } from "./providers";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,16 +25,18 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en" suppressHydrationWarning
+      lang="en"
+      suppressHydrationWarning
       data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} light h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-        <Navbar/>
-        {children}
+          <Navbar />
+          {children}
         </Providers>
-        </body>
+        <Toaster position="top-right" reverseOrder={false} />
+      </body>
     </html>
   );
 }
