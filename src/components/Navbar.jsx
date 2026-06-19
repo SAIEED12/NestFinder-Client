@@ -31,8 +31,6 @@ export default function Navbar() {
     return null;
   }
 
-  
-
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "All Properties", href: "/all-properties" },
@@ -41,7 +39,7 @@ export default function Navbar() {
   ];
 
   if(user){
-    navLinks.push({ name: "Dashboard", href: "/dashboard" });
+    navLinks.push({ name: "Dashboard", href: `/dashboard/${user.role}` });
   }
 
   return (

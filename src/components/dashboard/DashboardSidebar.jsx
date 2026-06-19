@@ -26,7 +26,7 @@ export default async function DashboardSidebar() {
         { icon: UserCircle2, label: "Profile", link: "/dashboard/tenant/profile" }
     ],
     'owner': [
-        { icon: LayoutDashboard, label: "Dashboard Home", link: "/dashboard/owner/home" },
+        { icon: LayoutDashboard, label: "Home", link: "/dashboard/owner/home" },
         { icon: PlusSquare, label: "Add Property", link: "/dashboard/owner/add-property" },
         { icon: Home, label: "My Properties", link: "/dashboard/owner/my-properties" },
         { icon: InboxIcon, label: "Booking Requests", link: "/dashboard/owner/booking-requests" },
