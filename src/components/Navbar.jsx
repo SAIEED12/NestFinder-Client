@@ -27,9 +27,9 @@ export default function Navbar() {
   }, []);
 
   const pathname = usePathname();
-  if(pathname.includes('dashboard')){
-    return null;
-  }
+  // if(pathname.includes('dashboard')){
+  //   return null;
+  // }
 
   const navLinks = [
     { name: "Home", href: "/" },

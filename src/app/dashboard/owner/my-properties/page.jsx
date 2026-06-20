@@ -3,7 +3,7 @@ import React from 'react';
 const OwnerMyProperties = () => {
     return (
         <div>
-            Owner My Properties
+             My Properties
         </div>
     );
 };

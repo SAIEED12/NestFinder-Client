@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Button } from "@heroui/react";
 import toast from "react-hot-toast"
 import { uploadImage } from "@/lib/imageUpload";
+import AddProperty from "@/app/dashboard/owner/add-property/page";
+import { addProperty } from "@/lib/api/product";
 
 export default function AddPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
@@ -13,7 +15,17 @@ export default function AddPropertyPage() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     const image = await uploadImage(formData.get("images"));
-    console.log(image)
+    
+    const property = {
+        ...data,
+        images: image.url,
+        amenities: selectedAmenities
+    }
+
+    const result = await addProperty(property);
+    console.log(result);
+
+
     
     // Add the selected checkboxes to our payload array
     data.amenities = selectedAmenities;
