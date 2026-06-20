@@ -5,10 +5,13 @@ import { Button } from "@heroui/react";
 import toast from "react-hot-toast"
 import { uploadImage } from "@/lib/imageUpload";
 import { addProperty } from "@/lib/action/properties";
+import { useRouter } from "next/navigation";
+
 
 
 export default function AddPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const router = useRouter();
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -30,6 +33,7 @@ export default function AddPropertyPage() {
     // Add the selected checkboxes to our payload array
     data.amenities = selectedAmenities;
     toast.success("Property added successfully!")
+    router.push("/dashboard/owner/my-properties")
 
   };
 
