@@ -1,16 +1,10 @@
 'use server'
-
-import { headers } from "next/headers";
-import { auth } from "../auth";
-
+import { getTokenServer } from "../getTokenServer";
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
 export const addProperty = async (property) => {
-    const {token} = await auth.api.getAccessToken({
-        headers: headers()
-    })
-
+    const token = await getTokenServer()
     const res = await fetch(`${baseURL}/owner/properties`, {
         method: 'POST',
         headers: {

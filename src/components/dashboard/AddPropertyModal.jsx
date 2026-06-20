@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { Button } from "@heroui/react";
 import toast from "react-hot-toast"
 import { uploadImage } from "@/lib/imageUpload";
-import AddProperty from "@/app/dashboard/owner/add-property/page";
-import { addProperty } from "@/lib/api/product";
+import { addProperty } from "@/lib/action/properties";
+
 
 export default function AddPropertyPage() {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
