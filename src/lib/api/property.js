@@ -21,12 +21,14 @@ export const getProperty = async (page) => {
     return data;
 }
 
-export const getAllProperties = async () => {
-    const res = await fetch(`${baseURL}/all-properities`, {
+export const getAllProperties = async (search) => {
+    
+    const res = await fetch(`${baseURL}/all-properties?search=${search}`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        next: { revalidate: 0 }
     });
     
     if (!res.ok) {
@@ -35,4 +37,10 @@ export const getAllProperties = async () => {
     
     const data = await res.json();
     return data;
+}
+
+export const getPropertyById = async(id) =>{
+    const res = await fetch(`${baseURL}/all-properties/${id}`)
+    const data = await res.json()
+    return data
 }

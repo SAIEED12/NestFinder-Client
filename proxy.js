@@ -19,7 +19,7 @@ export async function proxy(request) {
 export const config = {
   matcher: [
     // Tenant Protected Routes
-    '/properties/:id',            
+    '/all-properties/:id',            
     '/dashboard/tenant/bookings',   
     '/dashboard/tenant/favorites',  
     '/dashboard/tenant/profile',   

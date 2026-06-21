@@ -97,7 +97,7 @@ export default function Featured() {
 
                 {/* View Details Target Navigation Button Link */}
                 <Link
-                  href={`/properties/${property._id}`}
+                  href={`/all-properties/${property._id}`}
                   className="inline-flex items-center justify-center bg-[#E05638] hover:bg-[#c9492e] dark:bg-transparent dark:hover:bg-[#E05638]/10 text-white dark:text-[#E05638] border border-transparent dark:border-[#E05638]/40 font-bold text-xs px-4 h-9 rounded-xl transition-all shadow-sm active:scale-95 select-none"
                 >
                   View Details
