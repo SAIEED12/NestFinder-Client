@@ -20,3 +20,19 @@ export const getProperty = async (page) => {
     const data = await res.json();
     return data;
 }
+
+export const getAllProperties = async () => {
+    const res = await fetch(`${baseURL}/all-properities`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    
+    if (!res.ok) {
+        throw new Error(`Failed to fetch all public properties: ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data;
+}
