@@ -9,6 +9,7 @@ export default function BookingCard({ property = {}, userSession = {} }) {
   const [loading, setLoading] = useState(false);
 
   const currentUser = userSession?.user;
+  const role = currentUser?.role
   const rentPrice = property?.rent || "0";
   const rentInterval = property?.rentType || "Month";
   const propertyTitle = property?.title || "";
@@ -49,12 +50,22 @@ export default function BookingCard({ property = {}, userSession = {} }) {
         </div>
 
         <div className="mt-8 space-y-3">
-          <Button
-            onPress={() => setIsOpen(true)}
-            className="w-full bg-[#E05638] hover:bg-[#c9492e] text-white font-bold text-md h-12 rounded-xl shadow-xs transition-all active:scale-[0.98]"
-          >
-            Book Property
-          </Button>
+          {role === 'tenant' ? (
+            <Button
+              onClick={() => setIsOpen(true)}
+              className="w-full bg-[#E05638] hover:bg-[#c9492e] text-white font-bold text-md h-12 rounded-xl shadow-xs transition-all active:scale-[0.98]"
+            >
+              Book Now
+            </Button>
+          ) : (
+            <div className="p-4 bg-slate-50/60 dark:bg-zinc-900/30 border border-slate-200/60 dark:border-zinc-800/60 rounded-xl text-center shadow-2xs">
+              <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 leading-relaxed">
+                {role === 'owner' || role === 'admin'
+                  ? "Only Tenants can book a property!"
+                  : "Please authenticate with your tenant account credentials to book this property."}
+              </p>
+            </div>
+          )}
 
           <Button className="w-full bg-slate-50 hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-800/80 font-bold text-xs h-12 rounded-xl transition-all active:scale-[0.98] group flex items-center justify-center gap-2">
             <Heart size={16} strokeWidth={2.5} className="text-zinc-400 group-hover:text-[#E05638] transition-colors shrink-0" />

@@ -1,10 +1,10 @@
 import React from 'react';
 import { getPropertyById } from '@/lib/api/property';
-import { auth } from "@/lib/auth"; // 💡 Import your auth driver module
+import { auth } from "@/lib/auth"; 
 import { headers } from "next/headers";
 import Image from 'next/image';
 import Link from 'next/link';
-import BookingCard from '@/components/BookingCard'; // 💡 Import the new Client Component
+import BookingCard from '@/components/BookingCard';
 import { 
   MapPin, BedDouble, Bath, Maximize2, 
   Wifi, Shield, ArrowLeft, Building2, CheckCircle2 
@@ -16,16 +16,18 @@ const AMENITY_MAP = {
   security: { label: "24/7 Monitored Security", icon: <Shield size={16} /> },
 };
 
-export const dynamic = "force-dynamic";
+
 
 export default async function PropertyDetailsPage({ params }) {
   const { id } = await params;
   
   let property = null;
-  // Fetch active session state values to populate input parameters inside the user schema
   const userSession = await auth.api.getSession({
     headers: await headers(),
   });
+
+  // console.log(userSession)
+
 
   try {
     property = await getPropertyById(id);

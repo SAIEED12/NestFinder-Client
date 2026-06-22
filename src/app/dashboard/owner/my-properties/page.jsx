@@ -1,6 +1,5 @@
 import React from "react";
 import PropertiesTable from "./PropertiesTable";
-import { Button } from "@heroui/react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { getProperty } from "@/lib/api/property";
