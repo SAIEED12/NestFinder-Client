@@ -7,9 +7,11 @@ import { Calendar, Shield, Heart, User, Phone, Loader2 } from "lucide-react";
 export default function BookingCard({ property = {}, userSession = {} }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  // 💡 NEW STATE: Manages favorites background transaction cycles
+  const [favLoading, setFavLoading] = useState(false);
 
   const currentUser = userSession?.user;
-  const role = currentUser?.role
+  const role = currentUser?.role;
   const rentPrice = property?.rent || "0";
   const rentInterval = property?.rentType || "Month";
   const propertyTitle = property?.title || "";
@@ -17,8 +19,42 @@ export default function BookingCard({ property = {}, userSession = {} }) {
 
   const handleFormSubmission = () => {
     setLoading(true);
+  };
 
+  // 💡 NEW METHOD: Dispatches favorites payload map states to your Node server
+  const handleAddToFavorites = async () => {
+    if (!currentUser?.id) {
+      alert("Please authenticate with your tenant account credentials to save favorites.");
+      return;
+    }
 
+    try {
+      setFavLoading(true);
+      const expressApiUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+
+      const response = await fetch(`${expressApiUrl}/api/favorites`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          propertyId: propertyId,
+          tenantId: currentUser.id,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        alert(data.message); // Displays "Added to favorites" or "Removed from favorites"
+      } else {
+        alert(data.message || "Failed to update favorites ledger.");
+      }
+    } catch (err) {
+      console.error("Favorites sync dropped:", err);
+      alert("Network exception writing to favorite clusters.");
+    } finally {
+      setFavLoading(false);
+    }
   };
 
   return (
@@ -52,7 +88,7 @@ export default function BookingCard({ property = {}, userSession = {} }) {
         </div>
 
         <div className="mt-8 space-y-3">
-          {role === 'tenant' ? (
+          {role === "tenant" ? (
             <Button
               onClick={() => setIsOpen(true)}
               className="w-full bg-[#E05638] hover:bg-[#c9492e] text-white font-bold text-md h-12 rounded-xl shadow-xs transition-all active:scale-[0.98]"
@@ -62,16 +98,29 @@ export default function BookingCard({ property = {}, userSession = {} }) {
           ) : (
             <div className="p-4 bg-slate-50/60 dark:bg-zinc-900/30 border border-slate-200/60 dark:border-zinc-800/60 rounded-xl text-center shadow-2xs">
               <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 leading-relaxed">
-                {role === 'owner' || role === 'admin'
+                {role === "owner" || role === "admin"
                   ? "Only Tenants can book a property!"
                   : "Please authenticate with your tenant account credentials to book this property."}
               </p>
             </div>
           )}
 
-          <Button className="w-full bg-slate-50 hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-800/80 font-bold text-xs h-12 rounded-xl transition-all active:scale-[0.98] group flex items-center justify-center gap-2">
-            <Heart size={16} strokeWidth={2.5} className="text-zinc-400 group-hover:text-[#E05638] transition-colors shrink-0" />
-            <span>Add to favourites</span>
+          {/* 💡 FIXED: Configured Heart action controls to trigger database updates */}
+          <Button
+            onClick={handleAddToFavorites}
+            disabled={favLoading}
+            className="w-full bg-slate-50 hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-800/80 font-bold text-xs h-12 rounded-xl transition-all active:scale-[0.98] group flex items-center justify-center gap-2"
+          >
+            {favLoading ? (
+              <Loader2 size={16} className="animate-spin text-[#E05638]" />
+            ) : (
+              <Heart
+                size={16}
+                strokeWidth={2.5}
+                className="text-zinc-400 group-hover:text-[#E05638] transition-colors shrink-0"
+              />
+            )}
+            <span>{favLoading ? "Syncing Ledger..." : "Add to favourites"}</span>
           </Button>
         </div>
       </div>
