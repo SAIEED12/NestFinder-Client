@@ -17,6 +17,8 @@ export default function BookingCard({ property = {}, userSession = {} }) {
 
   const handleFormSubmission = () => {
     setLoading(true);
+
+
   };
 
   return (
