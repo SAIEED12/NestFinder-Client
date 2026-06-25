@@ -83,9 +83,9 @@ export default function Navbar() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E05638] text-white">
               <Home size={18} strokeWidth={2.5} />
             </div>
-            <p className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            <Link href="/" className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
               NestFinder
-            </p>
+            </Link>
           </div>
         </div>
 

@@ -1,15 +1,21 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Search, Filter, ArrowUpDown, Info } from "lucide-react";
+import { Search, Filter, ArrowUpDown, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
+import { Button } from "@heroui/react";
 
 export default function PublicAllPropertiesPage() {
   const searchParams = useSearchParams();
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading]       = useState(true);
+
+  // 💡 Pagination Control States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages]   = useState(1);
+  const limitPerPage = 12;
 
   // Initialize from URL params (set by Banner)
   const [searchLocation, setSearchLocation] = useState(() => searchParams.get("search")       || "");
@@ -25,10 +31,15 @@ export default function PublicAllPropertiesPage() {
     return () => clearTimeout(t);
   }, [searchLocation]);
 
-  // Re-fetch whenever any filter changes
+  // 💡 Reset pagination back to page 1 clean whenever filtering attributes mutate
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, selectedType, currentSort, minPrice, maxPrice]);
+
+  // Re-fetch whenever any filter OR active page matrix indicators change
   useEffect(() => {
     fetchProperties();
-  }, [debouncedSearch, selectedType, currentSort, minPrice, maxPrice]);
+  }, [debouncedSearch, selectedType, currentSort, minPrice, maxPrice, currentPage]);
 
   const fetchProperties = async () => {
     try {
@@ -41,9 +52,18 @@ export default function PublicAllPropertiesPage() {
       if (currentSort)  params.set("sort",          currentSort);
       if (minPrice)     params.set("minPrice",      minPrice);
       if (maxPrice)     params.set("maxPrice",      maxPrice);
+      
+      // 💡 Inject parameters to drive the backend aggregation facet pipeline
+      params.set("page", currentPage);
+      params.set("limit", limitPerPage);
 
       const res = await fetch(`${base}/api/public/properties?${params}`);
-      if (res.ok) setProperties(await res.json());
+      if (res.ok) {
+        const result = await res.json();
+        // 💡 Pull mappings safely from the response structural keys
+        setProperties(result.data || []);
+        setTotalPages(result.meta?.totalPages || 1);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -132,13 +152,14 @@ export default function PublicAllPropertiesPage() {
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Grid Canvas Section */}
       <div className="relative min-h-[300px]">
         {loading && (
           <div className="absolute inset-0 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-sm z-10 rounded-[24px] flex items-center justify-center">
             <div className="w-10 h-10 border-4 border-[#E05638] border-t-transparent rounded-full animate-spin" />
           </div>
         )}
+        
         {!loading && properties.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-zinc-200 dark:border-zinc-800/80 rounded-[32px] bg-slate-50/20 max-w-xl mx-auto p-6 space-y-2">
             <Info size={28} className="mx-auto text-zinc-300 mb-1" />
@@ -153,6 +174,47 @@ export default function PublicAllPropertiesPage() {
           </div>
         )}
       </div>
+
+      {/* 💡 FOOTER PAGINATION NAVIGATION BAR CONTROLS */}
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-6">
+          <Button
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="p-2.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-700 dark:text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed hover:border-[#E05638] dark:hover:border-[#E05638] transition-colors"
+            title="Previous Page"
+          >
+            <ChevronLeft size={16} />
+          </Button>
+
+          {/* Dynamic Page Index Counters Loop Layout */}
+          {Array.from({ length: totalPages }, (_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <Button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`w-10 h-10 rounded-xl text-xs font-extrabold transition-all border ${
+                  currentPage === pageNum
+                    ? "bg-[#E05638] border-[#E05638] text-white shadow-md shadow-[#E05638]/10"
+                    : "bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:border-[#E05638]"
+                }`}
+              >
+                {pageNum}
+              </Button>
+            );
+          })}
+
+          <Button
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl text-slate-700 dark:text-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed hover:border-[#E05638] dark:hover:border-[#E05638] transition-colors"
+            title="Next Page"
+          >
+            <ChevronRight size={16} />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
