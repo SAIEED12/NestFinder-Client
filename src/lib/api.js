@@ -2,37 +2,33 @@
 import { authClient } from "@/lib/auth-client";
 
 /**
- * Custom fetch wrapper that automatically injects the JWT Bearer token
- * into protected administrative, tenant, and owner API routes.
+ * Authenticated fetch wrapper — automatically injects JWT Bearer token
+ * using better-auth's jwtClient plugin (.getToken())
  */
 export async function secureFetch(endpoint, options = {}) {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
-  
-  // 💡 Pull the active token directly from better-auth client-side store
-  const session = authClient.getActions().getSession?.() || authClient.useSession?.()?.data;
-  const token = session?.token || localStorage.getItem("better-auth.session-token"); 
 
-  // Initialize and merge headers safely
+  // ✅ Correct way to get JWT token with jwtClient plugin
+  const token = await authClient.getToken();
+
   const headers = new Headers(options.headers || {});
   if (!headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-
-  // 🛡️ Append the Bearer token dynamically if it exists
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const config = {
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers,
-  };
-
-  const response = await fetch(`${baseUrl}${endpoint}`, config);
+  });
 
   if (response.status === 401) {
-    console.warn("Session expired or token invalid. Redirecting to authentication terminal...");
-    // Optional: handle automatic logout or route push to /login here
+    console.warn("Token expired or unauthorized — redirecting to login.");
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
   }
 
   return response;
