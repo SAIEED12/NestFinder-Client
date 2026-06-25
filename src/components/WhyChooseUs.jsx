@@ -103,11 +103,6 @@ export default function WhyChooseUs() {
                     </div>
                   </div>
 
-                  {/* Clean Action Callout Anchor area */}
-                  <div className="mt-8 pt-5 border-t border-zinc-100 dark:border-zinc-900 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-600 group-hover:text-[#E05638] transition-colors duration-300">
-                    <span>Learn Platform Protocol</span>
-                    <ArrowUpRight size={14} className="transform translate-y-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" />
-                  </div>
                 </motion.div>
               );
             })}

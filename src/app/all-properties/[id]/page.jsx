@@ -9,6 +9,7 @@ import {
   MapPin, BedDouble, Bath, Maximize2, 
   Wifi, Shield, ArrowLeft, Building2, CheckCircle2 
 } from 'lucide-react';
+import PropertyReviewSection from '@/components/PropertyReviewSection';
 
 const AMENITY_MAP = {
   wifi: { label: "High-Speed WiFi", icon: <Wifi size={16} /> },
@@ -130,7 +131,6 @@ export default async function PropertyDetailsPage({ params }) {
           {/* RIGHT STICKY INTERACTIVE COLUMN SIDEBAR */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
             
-            {/* 💡 FIXED: Injected Client Component passing structural server properties downward */}
             <BookingCard property={property} userSession={userSession} />
 
             {property.amenities && property.amenities.length > 0 && (
@@ -150,9 +150,11 @@ export default async function PropertyDetailsPage({ params }) {
               </div>
             )}
 
+
           </div>
         </div>
 
+            <PropertyReviewSection propertyId={id} />
       </div>
     </div>
   );
