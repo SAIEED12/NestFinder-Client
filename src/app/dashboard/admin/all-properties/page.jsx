@@ -9,7 +9,6 @@ import {
   MapPin, Home, DollarSign, Pencil
 } from "lucide-react";
 
-// ─── Modal Shell ─────────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
   return (
@@ -25,7 +24,7 @@ function Modal({ isOpen, onClose, children }) {
   );
 }
 
-// ─── Delete Modal ─────────────────────────────────────────────────────────────
+
 function DeleteModal({ isOpen, property, onConfirm, onCancel }) {
   return (
     <Modal isOpen={isOpen} onClose={onCancel}>

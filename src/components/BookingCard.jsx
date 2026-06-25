@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button, Modal, Input } from "@heroui/react";
 import { Calendar, Shield, Heart, User, Phone, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function BookingCard({ property = {}, userSession = {} }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ export default function BookingCard({ property = {}, userSession = {} }) {
     setLoading(true);
   };
 
-  // 💡 NEW METHOD: Dispatches favorites payload map states to your Node server
+
   const handleAddToFavorites = async () => {
     if (!currentUser?.id) {
       alert("Please authenticate with your tenant account credentials to save favorites.");
@@ -45,7 +46,7 @@ export default function BookingCard({ property = {}, userSession = {} }) {
 
       const data = await response.json();
       if (response.ok && data.success) {
-        alert(data.message); // Displays "Added to favorites" or "Removed from favorites"
+        toast.success(data.message); 
       } else {
         alert(data.message || "Failed to update favorites ledger.");
       }
@@ -105,7 +106,6 @@ export default function BookingCard({ property = {}, userSession = {} }) {
             </div>
           )}
 
-          {/* 💡 FIXED: Configured Heart action controls to trigger database updates */}
           <Button
             onClick={handleAddToFavorites}
             disabled={favLoading}

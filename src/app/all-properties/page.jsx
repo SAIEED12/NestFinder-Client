@@ -1,23 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, Filter, ArrowUpDown, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@heroui/react";
 
-export default function PublicAllPropertiesPage() {
+// 💡 1. Core Marketplace Grid View Logic
+function AllPropertiesContent() {
   const searchParams = useSearchParams();
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading]       = useState(true);
 
-  // 💡 Pagination Control States
+  // Pagination Control States
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages]   = useState(1);
   const limitPerPage = 12;
 
-  // Initialize from URL params (set by Banner)
+  // Initialize from URL params
   const [searchLocation, setSearchLocation] = useState(() => searchParams.get("search")       || "");
   const [selectedType,   setSelectedType]   = useState(() => searchParams.get("propertyType") || "all");
   const [currentSort,    setCurrentSort]    = useState("latest");
@@ -31,7 +32,7 @@ export default function PublicAllPropertiesPage() {
     return () => clearTimeout(t);
   }, [searchLocation]);
 
-  // 💡 Reset pagination back to page 1 clean whenever filtering attributes mutate
+  // Reset pagination back to page 1 clean whenever filtering attributes mutate
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedSearch, selectedType, currentSort, minPrice, maxPrice]);
@@ -53,14 +54,12 @@ export default function PublicAllPropertiesPage() {
       if (minPrice)     params.set("minPrice",      minPrice);
       if (maxPrice)     params.set("maxPrice",      maxPrice);
       
-      // 💡 Inject parameters to drive the backend aggregation facet pipeline
       params.set("page", currentPage);
       params.set("limit", limitPerPage);
 
       const res = await fetch(`${base}/api/public/properties?${params}`);
       if (res.ok) {
         const result = await res.json();
-        // 💡 Pull mappings safely from the response structural keys
         setProperties(result.data || []);
         setTotalPages(result.meta?.totalPages || 1);
       }
@@ -80,7 +79,6 @@ export default function PublicAllPropertiesPage() {
 
       {/* Filter toolbar */}
       <div className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-3 bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-zinc-800/80 p-3.5 rounded-[22px] shadow-sm">
-
         {/* Search */}
         <div className="lg:col-span-2 relative flex items-center">
           <Search size={14} className="absolute left-3.5 text-zinc-400 pointer-events-none" />
@@ -175,7 +173,7 @@ export default function PublicAllPropertiesPage() {
         )}
       </div>
 
-      {/* 💡 FOOTER PAGINATION NAVIGATION BAR CONTROLS */}
+      {/* FOOTER PAGINATION NAVIGATION BAR CONTROLS */}
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-6">
           <Button
@@ -187,7 +185,6 @@ export default function PublicAllPropertiesPage() {
             <ChevronLeft size={16} />
           </Button>
 
-          {/* Dynamic Page Index Counters Loop Layout */}
           {Array.from({ length: totalPages }, (_, idx) => {
             const pageNum = idx + 1;
             return (
@@ -216,5 +213,21 @@ export default function PublicAllPropertiesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// 💡 2. Primary Page Export wrapped inside Next.js Suspense Context Boundary
+export default function PublicAllPropertiesPage() {
+  return (
+    <Suspense 
+      fallback={
+        <div className="w-full min-h-[500px] flex flex-col items-center justify-center gap-3">
+          <div className="w-10 h-10 border-4 border-[#E05638] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-zinc-400 font-semibold tracking-tight">Loading listings matrix...</p>
+        </div>
+      }
+    >
+      <AllPropertiesContent />
+    </Suspense>
   );
 }

@@ -1,4 +1,4 @@
-// 📄 File Location: src/lib/api.js
+
 import { authClient } from "@/lib/auth-client";
 
 /**
@@ -8,8 +8,7 @@ import { authClient } from "@/lib/auth-client";
 export async function secureFetch(endpoint, options = {}) {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
   
-  // 💡 FIXED: Read synchronously using better-auth client actions OR localStorage cache
-  // This avoids breaking the Rules of Hooks entirely.
+
   const activeSession = authClient.getActions?.()?.getSession?.() || null;
   const token = activeSession?.token || localStorage.getItem("better-auth.session-token"); 
 
@@ -19,7 +18,6 @@ export async function secureFetch(endpoint, options = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  // 🛡️ Append the Bearer token dynamically if it exists
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
